@@ -1,2 +1,2 @@
-# incremental-deep-learning
+# Incremental Deep Learning
 Soft Computing project
