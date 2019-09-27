@@ -34,7 +34,7 @@ def convolve(img,filter,stride=1) :
 
 			temp = np.append(temp,masked_values)
 
-		print(temp.shape,filtered_img.shape)
+		#print(temp.shape,filtered_img.shape)
 		filtered_img =  np.append(filtered_img,temp.reshape(1,-1),axis=0)
 
 	return filtered_img
@@ -63,7 +63,7 @@ img = rgb2gray(img)
 '''plt.imshow(edge_detect)
 plt.show()'''
 
-def img_to_convolution_layer(img, filter_bank) :
+def apply_filters(img, filter_bank) :
 
 	filtered_layer = []
 
@@ -78,3 +78,47 @@ def img_to_convolution_layer(img, filter_bank) :
 
 
 
+def apply_maxPool(filtered_img,stride=2,pool_dim=2) :
+
+	new_col_len = ((filtered_img.shape[1]-pool_dim)//stride )+ 1
+	#print("new_col_len",new_col_len)
+	pooled_img = np.empty(shape=[0,new_col_len])
+
+	for i in range(0,filtered_img.shape[0]-pool_dim+1,stride) :
+
+		temp = np.empty(shape=0)
+		for j in range(0,filtered_img.shape[1]-pool_dim+1,stride) :
+
+			max_val = np.max(filtered_img[i:i+pool_dim,j:j+pool_dim])
+
+			temp = np.append(temp,max_val)
+
+		#print(temp.shape,filtered_img.shape)
+		#print(temp.shape)
+		pooled_img =  np.append(pooled_img,temp.reshape(1,-1),axis=0)
+
+	return pooled_img
+
+#print(apply_maxPool(np.arange(16).reshape(4,4)))
+
+def apply_maxPool_to_filters(filtered_img) :
+
+	pooled_layer = []
+
+	for i in range(filtered_img.shape[0]) :
+
+		pooled_layer.append(apply_maxPool(img))
+
+	return np.asarray(pooled_layer)	
+
+
+filtered_imgs = apply_filters(img,filter_bank)
+print(filtered_imgs.shape)
+pooled_imgs = apply_maxPool_to_filters(filtered_imgs)
+print(pooled_imgs.shape)
+
+def reLU(x) :
+	return (x if x>0 else 0)
+
+def apply_activation(inp, act_func=reLU) :
+	pass
