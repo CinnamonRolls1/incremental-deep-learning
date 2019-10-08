@@ -14,7 +14,8 @@ class Convolution : #BUilds a convolution layer
 
 	def convolve(self,img,filter,stride=1) : # applies a on the image
 		if len(img.shape) != len(filter.shape) :
-			raise Exception('filter depth should match image depth')
+			print('filter depth should match image depth')
+			exit()
 
 		new_col_len = (img.shape[1]-filter.shape[1]+1)//stride
 		filtered_img = np.empty(shape=[0,new_col_len])
@@ -90,7 +91,7 @@ class Convolution : #BUilds a convolution layer
 
 
 	def feed_through_layer(self,inp): #takes an image fllters it first, then applies an activation and finally performs pooling
-		return self.apply_maxPool_to_filters(self.apply_activation(self.apply_filters(inp,self.filter_bank))) #retunrs a numpy array of shape (<num_filters>,x-axis shape of pooled image, y-axis shape of pooled image)
+		return self.apply_maxPool_to_filters(self.apply_activation(self.apply_filters(inp,self.filter_bank))) #returns a numpy array of shape (<num_filters>,x-axis shape of pooled image, y-axis shape of pooled image)
 
 
 
