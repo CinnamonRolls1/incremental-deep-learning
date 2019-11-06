@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy as np
 
-class Convolution : #BUilds a convolution layer
+class Convolution : #Builds a convolution layer
 
 	def __init__(self,num_filters=64,filter_shape=(3,3)):
 		self.filter_bank = self.init_filters(num_filters,filter_shape)

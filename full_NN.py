@@ -17,6 +17,8 @@ class Neural_Network :
 			print("Activation function not given")
 			exit()
 
+		#print(X.shape)
+
 		self.nodesNumLayer=nodesNumLayer #list of number of nodes in each layer
 		self.nodes_outputLayer=nodes_outputLayer 
 		self.lr = learning_rate		
@@ -29,8 +31,11 @@ class Neural_Network :
 			for j in range(X.shape[0]) :
 				y_pred = self.feedForward(X[j,:],hidden_activation,output_activation)
 				cost  = cost_function(y_pred,y[j])
-				print(y_pred,y[j])
+				#print(y_pred,y[j])
 				self.backProp(cost_function,y[j],y_pred)
+
+		for i in self.weights :
+			print(i.shape)
 
 
 
@@ -51,8 +56,8 @@ class Neural_Network :
 
 		for i in range(len(self.nodesNumLayer)-1) :
 
-			self.weights.append(np.random.randn(self.nodesNumLayer[i],self.nodesNumLayer[i+1]))
-			self.bias.append(np.random.rand(self.nodesNumLayer[i+1]))
+			self.weights.append(np.random.normal(0,0.01,(self.nodesNumLayer[i],self.nodesNumLayer[i+1])))
+			self.bias.append(np.random.normal(0,0.01,self.nodesNumLayer[i+1]))
 			#print(self.weights[i].shape)
 
 
@@ -63,12 +68,20 @@ class Neural_Network :
 		output_act_vectorized = np.vectorize(self.output_activation)
 		current = instance.reshape(1,-1)
 		self.layer_vals = [current]
-		for i in range(len(self.weights)) :
+
+		i=0
+		while(i<(len(self.weights)-1)) :
 			#print(current)
 			current = np.matmul(current,self.weights[i]) + self.bias[i]
 			self.layer_vals.append(current)
-			#print(current,'\n')
-			current = hidden_act_vectorized(current) if i <(len(self.weights)-1) else output_act_vectorized(current)
+			print(current,'\n')
+			i+=1
+
+		current = hidden_act_vectorized(current)
+		current = np.matmul(current,self.weights[i]) + self.bias[i]
+		self.layer_vals.append(current)
+		print(current,'\n')
+		current = output_act_vectorized(current)
 
 		#print(current,"\n")
 
@@ -155,10 +168,12 @@ def main():
 		y = np.append(y,row,axis =0)
 
 	y_train = y
-	print(X_train.shape,y_train.shape)
+	#print(X_train.shape,y_train.shape)
 	#print(y_train[0])
 
-	model.train(X=X_train[:1000,:],y=y_train[:1000],nodesNumLayer=[16,32,16],nodes_outputLayer=10,learning_rate=0.1,epochs = 1,hidden_activation = model.reLU, output_activation = model.sigmoid)
+	#print(model.feedForward())
+	#print(X_train[1000,:].shape)
+	model.train(X=X_train[:7,:],y=y_train[:7],nodesNumLayer=[16,32,16],nodes_outputLayer=10,learning_rate=0.1,epochs = 500,hidden_activation = model.reLU, output_activation = model.sigmoid)
 
 if __name__ == '__main__':
 	main()
