@@ -9,7 +9,7 @@ class CNN(Neural_Network) :
 		Neural_Network.__init__(self)
 		self.conv = Convolution(num_filt)
 
-	def train(self,X=None,y=None,nodesNumLayer=[16],nodes_outputLayer=1,learning_rate=0.1,epochs=100,hidden_activation=None,output_activation = None):
+	def train(self,X=None,y=None,nodesNumLayer=[16],nodes_outputLayer=1,learning_rate=0.1,epochs=100,hidden_activation=None,output_activation = None,save=False):
 		if X is None or y is None :
 			print('No Dataset or labels given')
 			exit()
@@ -72,6 +72,20 @@ class CNN(Neural_Network) :
 		self.weights[0] += delta_w
 		self.bias[0] += (self.lr*errors[len(self.weights)-1].flatten())
 
+	def test(self,X,y):
+		count=0
+		for i in range(X.shape[0]) :
+			convoluted_op = self.conv.feed_through_layer(X[i,:])
+			cop_shape = convoluted_op.shape
+			#print("cop_shape",cop_shape)
+			convoluted_op = convoluted_op.flatten()
+			y_pred = self.feedForward(convoluted_op,self.hidden_activation,self.output_activation)
+
+			if np.argmax(y_pred) == np.argmax(y[i]) :
+				count+=1
+
+		return count/y.shape[0]
+
 
 def main():
 	model = CNN(4)
@@ -88,7 +102,8 @@ def main():
 
 	y_train = y
 
-	model.train(X=X_train[:1000,:],y=y_train[:1000],nodesNumLayer=[32],nodes_outputLayer=10,learning_rate=0.1,epochs = 500,hidden_activation = model.sigmoid, output_activation = model.sigmoid)
+	model.train(X=X_train[:100,:],y=y_train[:100],nodesNumLayer=[16],nodes_outputLayer=10,learning_rate=0.1,epochs = 10,hidden_activation = model.sigmoid, output_activation = model.sigmoid)
+	print(model.test(X_train[:10],y_train[:10]))
 
 if __name__ == '__main__':
 	main()
